@@ -1,6 +1,8 @@
 const express = require('express');
 const users = require('./models/users'); 
+const expenses=require('./models/expenses')
 const userroutes=require('./routes/userroutes')
+const expenseroutes=require('./routes/expenseroutes')
 const db = require('./utilss/db-connection'); 
 const cors = require('cors');
 
@@ -10,6 +12,7 @@ const app = express();
 app.use(express.json()); 
 app.use(cors());
 app.use('/users',userroutes)
+app.use('/expense',expenseroutes)
 
 app.get('/', (req, res) => {
     res.send('Server is running and listening on port 3000');

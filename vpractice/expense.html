@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+   
+    <form>
+        <label for="amount">Enter amount</label>
+        <input type="number" id="amount">
+        <label for="description">Enter description</label>
+        <input type="text" id="description">
+        <label for="category">Choose a category</label>
+        <select name="category" id="category">
+            <option value="restaurent">restaurent</option>
+            <option value="movie">movie</option>
+            <option value="groceries">groceries</option>
+            <option value="shopping">shopping</option>
+
+        </select><br><br>
+        <button type="submit">add expense</button>
+    </form>
+     <ul id="expense-details"></ul>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded',()=>{
+        resetform()
+        getexpenseDetails()
+    })
+    function resetform(){
+  
+    document.getElementById('amount').value=''
+    document.getElementById('description').value=''
+        document.getElementById('category').value=''
+
+    }
+    const form=document.querySelector('form')
+    form.addEventListener('submit',async (event)=>{
+        try{
+             event.preventDefault()
+            const amount=document.getElementById('amount').value
+            const description =document.getElementById('description').value
+            const category=document.getElementById('category').value
+            const obj={amount,description,category}
+            const result=await axios.post('http://localhost:3000/expense/addexpense',obj)
+            console.log(result)
+            alert(result.data.message)
+            resetform()
+            getexpenseDetails()
+            
+
+        }
+        catch(err){
+            console.log(err)
+            if(err.status==400){
+                alert(err.message)
+            }
+        }
+
+    })
+    async function getexpenseDetails(){
+        try{
+            const result= await axios.get('http://localhost:3000/expense/getexpenses')
+            const expenses=result.data
+            const ul=document.querySelector('ul')
+            ul.innerHTML=''
+            for(const expense of expenses){
+                const li=document.createElement('li')
+                li.innerHTML=`${expense.amount}-${expense.description}-${expense.category}`
+                const button=document.createElement('button')
+                button.textContent='Delete expense'
+                button.onclick=()=>{
+                    deleteExpense(expense.id)
+                }
+                li.appendChild(button)
+                ul.appendChild(li)
+
+            }
+
+        }
+        catch(err){
+            console.log(err)
+        }
+
+    }
+async function deleteExpense(id){
+    try{
+        const result=await axios.delete(`http://localhost:3000/expense/deleteexpense/${id}`)
+        console.log(result)
+        alert(result.data.message)
+        getexpenseDetails()
+
+    }
+    catch(err){
+        console.log(err)
+    }
+}
+       
+
+
+</script>
+</html>
