@@ -1,5 +1,5 @@
 const {DataTypes}=require('sequelize')
-const db=require('../utils/dbconnection')
+const db=require('../utilss/db-connection')
 const users=db.define('users',{
     name:{
         type:DataTypes.STRING,
@@ -7,7 +7,8 @@ const users=db.define('users',{
     },
     email:{
         type:DataTypes.STRING,
-        allowNull:false
+        allowNull:false,
+        unique:true
     },
     password:{
         type:DataTypes.TEXT,

@@ -5,57 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Signup</title>
 </head>
+<style>
+    #error-msg{
+        display: none;
+        color: red;
+    }
+</style>
 <body>
-   <form onsubmit="submitForm(event)">
+   <form >
     <label for="name">Enter name</label>
-    <input type="text" id="name" required><br><br>
+    <input type="text" id="name" ><br><br>
 
     <label for="email">Enter email</label>
-    <input type="email" id="email" required><br><br> <label for="password">Enter password</label>
-    <input type="password" id="password" required><br><br>
+    <input type="email" id="email" ><br><br>
+    <label for="password">Enter password</label>
+    <input type="password" id="password" ><br><br>
 
     <button type="submit">Signup</button>
 </form>
+<div id="error-msg"></div>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    function submitForm(e) {
-        // 🟢 FIX: Prevent the default form submission (stops page reload)
-        e.preventDefault(); 
+    document.addEventListener('DOMContentLoaded',()=>{
+        restetform()
+    })
+   const form=document.querySelector('form')
+   form.addEventListener('submit',async ()=>{
+    try{
+        event.preventDefault()
+    const name=document.getElementById('name').value
+    const email=document.getElementById('email').value
+    const password=document.getElementById('password').value
+    const obj={name,email,password}
+    const result=await axios.post('http://localhost:3000/users/signup',obj)
+    console.log(result)
+    restetform()
+    
 
-        const name = document.getElementById('name').value;
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-
-        // Basic client-side check (though 'required' should handle this)
-        if (!name || !email || !password) {
-            console.log("All fields are required.");
-            // Optionally, show an alert or error message to the user
-            return; 
-        }
-
-        const obj = {
-            name,
-            email,
-            password
-        };
-
-        console.log("Sending data:", obj);
-
-        axios.post('http://localhost:3000/user/signup', obj)
-            .then((res) => {
-                console.log("Signup successful:", res.data.message);
-                // Handle success (e.g., redirect or show a success message)
-                alert(res.data.message);
-            })
-            .catch((err) => {
-                // Log the response error message from the server if available
-                const errorMessage = err.response ? err.response.data.error : "An unknown error occurred.";
-                console.error("Signup failed:", errorMessage);
-                alert("Error: " + errorMessage);
-            });
     }
+    catch(err){
+        console.log(err.response)
+        const div=document.querySelector('#error-msg')
+        if(err.status==400){
+            div.style.display='block'
+            div.textContent='Error:Request failed with status code 400'
+        }
+        if(err.status==409){
+            div.style.display='block'
+            div.textContent='Error:enterd email is alreay exists'
+        }
+        restetform()
+    }
+    
+   })
+   function restetform(){
+    document.getElementById('name').value=''
+    document.getElementById('email').value=''
+    document.getElementById('password').value=''
+
+   }
 
 </script>
 </html>
