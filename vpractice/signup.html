@@ -23,13 +23,14 @@
 
     <button type="submit">Signup</button>
 </form>
+<a href="./login.html">Existing User-login</a>
 <div id="error-msg"></div>
 
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded',()=>{
-        restetform()
+        resetform()
     })
    const form=document.querySelector('form')
    form.addEventListener('submit',async ()=>{
@@ -40,30 +41,32 @@
     const password=document.getElementById('password').value
     const obj={name,email,password}
     const result=await axios.post('http://localhost:3000/users/signup',obj)
+    alert('data added to database succesfully')
     console.log(result)
-    restetform()
+    resetform()
     
 
     }
     catch(err){
-        console.log(err.response)
+        console.log(err)
         const div=document.querySelector('#error-msg')
-        if(err.status==400){
+        if(err.response.status==400){
             div.style.display='block'
             div.textContent='Error:Request failed with status code 400'
         }
-        if(err.status==409){
+        if(err.response.status==409){
             div.style.display='block'
             div.textContent='Error:enterd email is alreay exists'
         }
-        restetform()
     }
     
    })
-   function restetform(){
+   function resetform(){
     document.getElementById('name').value=''
     document.getElementById('email').value=''
     document.getElementById('password').value=''
+    const div1=document.querySelector('#error-msg')
+    div1.textContent=''
 
    }
 
