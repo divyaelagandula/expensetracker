@@ -47,11 +47,13 @@
         const result=await axios.post('http://localhost:3000/users/login',obj)
         alert(result.data.message)
         resetform()
+          const div=document.getElementById('error-msg')
+          div.textContent=''
         console.log(result)
         }
         catch(err){
             console.log(err)
-            if(err.status==400 || err.status==404){
+            if(err.status==400 || err.status==404 || err.status==401){
                 const div=document.getElementById('error-msg')
                 div.textContent=`Error:${err.response.data.message}`
                 resetform()
