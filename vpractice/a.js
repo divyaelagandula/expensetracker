@@ -1,6 +1,7 @@
 const express = require('express');
 const users = require('./models/users'); 
 const expenses=require('./models/expenses')
+const index=require('./models/index')
 const userroutes=require('./routes/userroutes')
 const expenseroutes=require('./routes/expenseroutes')
 const db = require('./utilss/db-connection'); 

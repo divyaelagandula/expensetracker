@@ -51,6 +51,7 @@
           div.textContent=''
         console.log(result)
            window.location.href = "expense.html"; 
+           localStorage.setItem('token',result.data.token)
         }
         catch(err){
             console.log(err)

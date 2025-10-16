@@ -40,12 +40,13 @@
     const form=document.querySelector('form')
     form.addEventListener('submit',async (event)=>{
         try{
+             const token=localStorage.getItem('token')
              event.preventDefault()
             const amount=document.getElementById('amount').value
             const description =document.getElementById('description').value
             const category=document.getElementById('category').value
             const obj={amount,description,category}
-            const result=await axios.post('http://localhost:3000/expense/addexpense',obj)
+            const result=await axios.post('http://localhost:3000/expense/addexpense',obj,{headers:{'authorization':token}})
             console.log(result)
             alert(result.data.message)
             resetform()
@@ -62,8 +63,10 @@
 
     })
     async function getexpenseDetails(){
+        
         try{
-            const result= await axios.get('http://localhost:3000/expense/getexpenses')
+            const token=localStorage.getItem('token')
+            const result= await axios.get('http://localhost:3000/expense/getexpenses',{headers:{'authorization':token}})
             const expenses=result.data
             const ul=document.querySelector('ul')
             ul.innerHTML=''
@@ -88,7 +91,8 @@
     }
 async function deleteExpense(id){
     try{
-        const result=await axios.delete(`http://localhost:3000/expense/deleteexpense/${id}`)
+        const token=localStorage.getItem('token')
+        const result=await axios.delete(`http://localhost:3000/expense/deleteexpense/${id}`,{headers:{'authorization':token}})
         console.log(result)
         alert(result.data.message)
         getexpenseDetails()

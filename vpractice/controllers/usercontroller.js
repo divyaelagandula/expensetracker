@@ -1,5 +1,6 @@
 const users=require('../models/users')
 const bcrypt=require('bcrypt')
+const jwt=require('jsonwebtoken')
 function isnotvalid(string){
     if(string==undefined||string.length==0){
         return true
@@ -63,6 +64,9 @@ const signup=async (req,res)=>{
 //     }
 
 // }
+function generateToken(id){
+    return jwt.sign({userid:id},'divyakavya')
+}
 const login=async (req,res)=>{
     try{
         const {email,password}=req.body
@@ -79,7 +83,7 @@ const login=async (req,res)=>{
                     throw new Error('something went wrong')
                 }
                 if(result==true){
-                    return res.status(200).json({succeses:true,message:'user logged successfully'})
+                    return res.status(200).json({data:user,message:'user logged successfully',token:generateToken(user[0].id)})
                 }
                 else{
                     return res.status(401).json({succeses:false,message:'password invalid'})
