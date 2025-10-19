@@ -50,8 +50,9 @@
           const div=document.getElementById('error-msg')
           div.textContent=''
         console.log(result)
-           window.location.href = "expense.html"; 
+          
            localStorage.setItem('token',result.data.token)
+            window.location.href = "expense.html"; 
         }
         catch(err){
             console.log(err)

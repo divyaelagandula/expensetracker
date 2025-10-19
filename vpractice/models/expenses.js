@@ -18,6 +18,10 @@ allowNull:false
     category:{
         type:DataTypes.TEXT,
         allowNull:false
+    },
+    membershipstatus:{
+        type:DataTypes.STRING,
+        allowNull:false
     }
 })
 module.exports=expenses

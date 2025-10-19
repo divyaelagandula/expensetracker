@@ -15,7 +15,7 @@ const addexpense=async (req,res)=>{
         if(isnotvalid(amount)||isnotvalid(category)){
             res.status(400).json({message:'amount and category must to fill'})
         }
-        const result=await expenses.create({amount,description,category,'userId':req.user.id})
+        const result=await expenses.create({amount,description,category,'userId':req.user.id,membershipstatus:"false"})
         console.log('added data in db.....',result)
         res.status(201).json({message:'details added sucesfully',data:result})
     }
