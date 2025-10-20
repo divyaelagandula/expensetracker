@@ -212,7 +212,7 @@ async function accesendingOrderExpenses(){
     ul.textContent=''
     for(let useramount of users_amount){
         const li=document.createElement('li')
-        li.innerHTML=`NAME - ${useramount.name},Total Expense -${useramount.total_amount}`
+        li.innerHTML=`NAME - ${useramount.name},Total Expense -${useramount.totalamount}`
         ul.appendChild(li)
     }
     

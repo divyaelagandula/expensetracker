@@ -1,4 +1,7 @@
+const { Sequelize } = require('sequelize')
 const expenses=require('../models/expenses')
+const users=require('../models/users')
+
 function isnotvalid(string){
     if(string==''){
         return true
@@ -16,10 +19,27 @@ const addexpense=async (req,res)=>{
             res.status(400).json({message:'amount and category must to fill'})
         }
         const result=await expenses.create({amount,description,category,'userId':req.user.id})
+       const [affectedRowsCount] = await users.update(
+            { 
+                // ✅ CORRECT: Use a template literal (backticks) to build the SQL expression
+                totalamount: Sequelize.literal(`totalamount + ${amount}`)
+            }, 
+            { 
+                where: { id: req.user.id } 
+            }
+        );
+
+        if (affectedRowsCount > 0) {
+            console.log(`Successfully added ${amount} to total_amount for user ID ${req.user.id}.`);
+        } else {
+            console.log(`No user found with ID ${req.user.id} to update.`);
+        }
+        
         console.log('added data in db.....',result)
         res.status(201).json({message:'details added sucesfully',data:result})
     }
     catch(error){
+        console.log(error)
         res.status(500).json({message:error})
     }
 

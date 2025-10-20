@@ -21,15 +21,8 @@ const checkingUserIsPremiumOrNot = async (req, res) => {
 const leaderBoard=async (req,res)=>{
     try{
         const userexpenses=await users.findAll({
-            attributes:['id','name',[Sequelize.fn('SUM',Sequelize.col('expenses.amount')),'total_amount']],
-            include:[{
-                model:expenses,
-                attributes:[]
-            }],
-            group:['users.id'],
-            order:[['total_amount','DESC']],
-            raw:true
-
+            raw:true,
+            order:[['totalamount','DESC']]
         })
     console.log("userexpenses>>>",userexpenses)
     res.status(200).json({userexpenses})

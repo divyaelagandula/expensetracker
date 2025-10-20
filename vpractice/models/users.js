@@ -23,6 +23,11 @@ allowNull:false
     membershipStatus:{
        type:DataTypes.STRING,
         allowNull:false 
+    },
+    totalamount:{
+        type:DataTypes.INTEGER,
+        allowNull:false,
+        defaultValue:0
     }
 })
 module.exports=users
