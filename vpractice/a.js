@@ -5,6 +5,7 @@ const index=require('./models/index')
 const userroutes=require('./routes/userroutes')
 const expenseroutes=require('./routes/expenseroutes')
 const paymentroutes=require('./routes/paymentroutes')
+const premiumroutes=require('./routes/premiumroutes')
 const db = require('./utilss/db-connection'); 
 const cors = require('cors');
 
@@ -16,7 +17,7 @@ app.use(cors());
 app.use('/membership',paymentroutes)
 app.use('/users',userroutes)
 app.use('/expense',expenseroutes)
-
+app.use('/premium',premiumroutes)
 
 app.get('/', (req, res) => {
     res.send('Server is running and listening on port 3000');

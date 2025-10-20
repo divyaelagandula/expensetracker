@@ -17,7 +17,7 @@ const signup=async (req,res)=>{
             return res.status(400).json({Error:'missing input filed'})
         }
         bcrypt.hash(password,5,async (err,hash)=>{
-             const result=await users.create({name,email,password:hash})
+             const result=await users.create({name,email,password:hash,membershipStatus:'false'})
         res.status(201).json({message:'details added to database'})
         })
        

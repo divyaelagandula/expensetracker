@@ -19,6 +19,10 @@ allowNull:false
     password:{
         type:DataTypes.TEXT,
         allowNull:false
+    },
+    membershipStatus:{
+       type:DataTypes.STRING,
+        allowNull:false 
     }
 })
 module.exports=users

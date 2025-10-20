@@ -14,7 +14,8 @@
 </style>
 <body>
     <button id="premium">By Premium Membership</button>
-    <button id="leadership">leadership</button>
+    <button style='display: none;' id="leadership">ShowLeaderBoard</button>
+    <p id="memeber"></p>
     <form>
     
         <label for="amount">Enter amount</label>
@@ -32,6 +33,8 @@
         <button type="submit">add expense</button>
     </form>
      <ul id="expense-details"></ul>
+     <h2 style="display: none;" id="leaderBoard">Leader Board</h2>
+     <ul id="userstotalamount"></ul>
 </body>
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
@@ -40,6 +43,7 @@
     document.addEventListener('DOMContentLoaded',()=>{
         resetform()
         getexpenseDetails()
+        checkingUserPremiumOrNot()
     })
     function resetform(){
   
@@ -161,16 +165,11 @@ premium.addEventListener('click',async ()=>{
             console.log(result.paymentDetails.paymentMessage);
             const token=localStorage.getItem('token')
            
-                        const response= await axios.get(`http://localhost:3000/membership/payment-status/${orderId}`,{headers:{'authorization':token}})
+const response= await axios.get(`http://localhost:3000/membership/payment-status/${orderId}`,{headers:{'authorization':token}})
 
            
             alert("Your payment is " + response.data.orderStatus)
-            if(response.data.orderStatus=='Success'){
-                const leadership=document.getElementById('leadership')
-                leadership.addEventListener('click',()=>{
-                    accesendingOrderExpenses()
-                })
-            }
+           checkingUserPremiumOrNot()
         }
 
 
@@ -179,8 +178,52 @@ premium.addEventListener('click',async ()=>{
       }
     
 })
-function accesendingOrderExpenses(){
+async function checkingUserPremiumOrNot(){
+    try{
+          const token=localStorage.getItem('token')
+    const result= await axios.get('http://localhost:3000/premium/checking',{headers:{'authorization':token}})
+    console.log(result.data.userResult)
+    if(result.data.userResult.membershipStatus==='true'){
+        const leadership=document.getElementById('leadership')
+                leadership.style.display='block'
+                const premium=document.getElementById('premium')
+                premium.style.display='none'
+                const para=document.getElementById('memeber')
+                para.style.color='red'
+                para.textContent='Your a premium memeber'
+                leadership.addEventListener('click',()=>{
+                    accesendingOrderExpenses()
+                })
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+   
+}
+async function accesendingOrderExpenses(){
+    try{
+    const result=await axios.get('http://localhost:3000/premium/leaderBoard')
+    console.log(result.data.userexpenses)
+    const users_amount=result.data.userexpenses
+    const heading=document.getElementById('leaderBoard')
+    heading.style.display='block'
+    const ul=document.getElementById('userstotalamount')
+    ul.textContent=''
+    for(let useramount of users_amount){
+        const li=document.createElement('li')
+        li.innerHTML=`NAME - ${useramount.name},Total Expense -${useramount.total_amount}`
+        ul.appendChild(li)
+    }
     
+    }
+    catch(err){
+        console.log(err)
+    }
+
+
+
+
 }
 
 </script>

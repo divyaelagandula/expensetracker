@@ -6,7 +6,7 @@ const authentication=async (req,res,next)=>{
         const user=jwt.verify(token,'divyakavya')
         console.log('id >>>>>>>>',user.userid)
         const result= await users.findByPk(user.userid,{raw:true})
-        console.log(result)
+        console.log('modifies>>>>>>>..',result)
         req.user=result
         next()
 

@@ -1,11 +1,12 @@
  const { Cashfree, CFEnvironment } = require("cashfree-pg");
 
-  const cashfree = new Cashfree(CFEnvironment.SANDBOX, "TEST108424737d52ebab4e83efef6a4637424801", "cfsk_ma_test_3c09f52f6afec1937e955a195f34524c_f53f915d");
+const cashfree = new Cashfree(CFEnvironment.SANDBOX, "TEST108424737d52ebab4e83efef6a4637424801", "cfsk_ma_test_3c09f52f6afec1937e955a195f34524c_f53f915d");
 
    
 const path = require("path");
 
 const expenses= require("../models/expenses");
+const Users=require('../models/users')
 
 
 const processPayment = async (req, res) => {
@@ -77,14 +78,14 @@ const getPaymentStatus = async (req, res) => {
   
 
     // Update payment status in the database
-    const order = await expenses.findAll({where:{userId:req.user.id},raw:true});
-    console.log(order)
-await expenses.update(
-  { membershipstatus: orderStatus }, // The fields to update
-  { where: { userId: req.user.id } }  // The condition for the update
-);
+ 
 
-   
+if(orderStatus==='Success'){
+  await Users.update(
+  { membershipStatus: 'true' }, // The fields to update
+  { where: {id: req.user.id } }  // The condition for the update
+);
+}
     
     res.json({orderStatus})
    
