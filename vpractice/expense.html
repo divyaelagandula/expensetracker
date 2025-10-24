@@ -22,14 +22,8 @@
         <input type="number" id="amount">
         <label for="description">Enter description</label>
         <input type="text" id="description">
-        <label for="category">Choose a category</label>
-        <select name="category" id="category">
-            <option value="restaurent">restaurent</option>
-            <option value="movie">movie</option>
-            <option value="groceries">groceries</option>
-            <option value="shopping">shopping</option>
 
-        </select><br><br>
+     
         <button type="submit">add expense</button>
     </form>
      <ul id="expense-details"></ul>
@@ -49,7 +43,7 @@
   
     document.getElementById('amount').value=''
     document.getElementById('description').value=''
-        document.getElementById('category').value=''
+       
 
     }
     const form=document.querySelector('form')
@@ -61,8 +55,8 @@
              console.log('local storage tocken .....',token)
             const amount=document.getElementById('amount').value
             const description =document.getElementById('description').value
-            const category=document.getElementById('category').value
-            const obj={amount,description,category}
+           
+            const obj={amount,description}
             const result=await axios.post('http://localhost:3000/expense/addexpense',obj,{headers:{'authorization':token}})
             console.log(result)
             alert(result.data.message)

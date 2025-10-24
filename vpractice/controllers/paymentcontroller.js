@@ -28,10 +28,10 @@ const processPayment = async (req, res) => {
           }
         }
            const response = await cashfree.PGCreateOrder(request);
-        console.log(response.data)
+     
         const paymentSessionId=response.data.payment_session_id;
         const orderId=response.data.order_id;
-        console.log(paymentSessionId,orderId)
+   
           
                                                                                                                      
   
@@ -49,13 +49,12 @@ const processPayment = async (req, res) => {
 
 const getPaymentStatus = async (req, res) => {
   const orderId = req.params.orderId; 
-  console.log(orderId)
+
 
 
   try {
     
         const response = await cashfree.PGOrderFetchPayments(orderId);
-        console.log('payments',response)
 
         let getOrderResponse = response.data;
         let orderStatus;

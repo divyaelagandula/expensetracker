@@ -16,12 +16,13 @@ const signup=async (req,res)=>{
         if(isnotvalid(name)||isnotvalid(email)||isnotvalid(password)){
             return res.status(400).json({Error:'missing input filed'})
         }
-        bcrypt.hash(password,5,async (err,hash)=>{
-             const result=await users.create({name,email,password:hash,membershipStatus:'false',totalamount:0})
+        const hash = await bcrypt.hash(password, 5);
+    
+    const result=await users.create({name,email,password:hash,membershipStatus:'false',totalamount:0})
         res.status(201).json({message:'details added to database'})
-        })
-       
-    }
+        }
+    
+    
     catch(error){
         console.log(error.name)
         if(error.name=='SequelizeUniqueConstraintError'){
@@ -76,7 +77,6 @@ const login=async (req,res)=>{
         const user=await users.findAll({where:{email:email},raw:true})
                 // if no email is found it return empty list..if email found list of that objet details returns
 
-        console.log(user)
         if(user.length>0){
             bcrypt.compare(password,user[0].password,(error,result)=>{
                 if(error){

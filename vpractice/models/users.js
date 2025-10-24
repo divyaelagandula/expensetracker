@@ -26,7 +26,6 @@ allowNull:false
     },
     totalamount:{
         type:DataTypes.INTEGER,
-        allowNull:false,
         defaultValue:0
     }
 })
