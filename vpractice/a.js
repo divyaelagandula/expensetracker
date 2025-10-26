@@ -28,7 +28,7 @@ app.get('/', (req, res) => {
 
 
 
-db.sync({ alter: true }).then(() => {
+db.sync().then(() => {
     console.log('Database synchronized successfully');
     app.listen(3000, () => {
         console.log("Server is running on http://localhost:3000");

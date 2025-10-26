@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize')
+const { Sequelize, where } = require('sequelize')
 const expenses=require('../models/expenses')
 const users=require('../models/users')
 require('dotenv').config()
@@ -68,10 +68,30 @@ const addexpense=async (req,res)=>{
 }
 const getexpenses=async (req,res)=>{
     try{
-      
-        const result=await expenses.findAll({where:{userId:req.user.id},raw:true})
+        const page=Number(req.query.page)
+        const totalexpenses=await expenses.count({where:{userId:req.user.id}})
+        console.log('tttttttttt',totalexpenses)
+        const result=await expenses.findAll({
+
+            where: { userId: req.user.id}, // Filter by the authenticated user
+            limit: 5,         // The number of records to return
+            offset: (page-1)*5, 
+            raw:true          // The number of records to skip
+
+        })
         console.log('getting particular user details........',result)
-        res.status(200).send(result)
+        const buttondetails={
+            currentpage:page,
+            previouspage:page-1,
+            nextpage:page+1,
+            haspreviouspage:page>1,
+            hasnextpage:page<Math.ceil(totalexpenses/5),
+            totalpages:Math.ceil(totalexpenses/5)
+
+        }
+
+        
+        res.status(200).json({result:result,buttondetails:buttondetails})
     }
     catch(err){
         res.status(500).json({message:'unable to fetch details'})
