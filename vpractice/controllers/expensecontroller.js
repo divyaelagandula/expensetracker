@@ -68,25 +68,26 @@ const addexpense=async (req,res)=>{
 }
 const getexpenses=async (req,res)=>{
     try{
-        const page=Number(req.query.page)
+        const usedpage=Number(req.query.usedpage)
+        const limit=Number(req.query.limit)
         const totalexpenses=await expenses.count({where:{userId:req.user.id}})
         console.log('tttttttttt',totalexpenses)
         const result=await expenses.findAll({
 
             where: { userId: req.user.id}, // Filter by the authenticated user
-            limit: 5,         // The number of records to return
-            offset: (page-1)*5, 
+            limit: limit,         // The number of records to return
+            offset: (usedpage-1)*limit, 
             raw:true          // The number of records to skip
 
         })
         console.log('getting particular user details........',result)
         const buttondetails={
-            currentpage:page,
-            previouspage:page-1,
-            nextpage:page+1,
-            haspreviouspage:page>1,
-            hasnextpage:page<Math.ceil(totalexpenses/5),
-            totalpages:Math.ceil(totalexpenses/5)
+            currentpage:usedpage,
+            previouspage:usedpage-1,
+            nextpage:usedpage+1,
+            haspreviouspage:usedpage>1,
+            hasnextpage:usedpage<Math.ceil(totalexpenses/limit),
+            totalpages:Math.ceil(totalexpenses/limit)
 
         }
 

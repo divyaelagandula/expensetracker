@@ -18,6 +18,12 @@
     <button id="premium">By Premium Membership</button>
     <button style='display: none;' id="leadership">ShowLeaderBoard</button>
     <p id="memeber"></p>
+    <select id="numberOfExpensesPerPage" name="count">
+       <option value="0" selected>0</option>
+       <option value="2">2</option>
+            <option value="5">5</option>
+        <option value="10" >10</option>
+    </select>
     <form>
 
         <label for="amount">Enter amount</label>
@@ -37,18 +43,34 @@
 <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
 
 <script>
+    let usedpage=1
+    const pagecount=document.getElementById('numberOfExpensesPerPage')
+    
+    pagecount.addEventListener('change',()=>{
+       
+        getexpenses()
+    })
 
     const token = localStorage.getItem('token')
     document.addEventListener('DOMContentLoaded', async () => {
         resetform()
 
         checkingUserPremiumOrNot()
-        const page = 1
-        axios.get(`http://localhost:3000/expense/getexpenses?page=${page}`, { headers: { 'authorization': token } })
+        const limit=document.getElementById('numberOfExpensesPerPage').value
+        axios.get(`http://localhost:3000/expense/getexpenses?usedpage=${usedpage}&limit=${limit}`, { headers: { 'authorization': token } })
             .then((result) => {
                 console.log(result)
-                showexpenses(result.data.result)
-                showpagination(result.data.buttondetails)
+                const list=result.data.result
+                 showexpenses(list)
+                console.log('number of expenses',list.length)
+                if(list.length!=0){
+                 showpagination(result.data.buttondetails)
+                }
+                else{
+                     const pigination_buttons = document.getElementById('pigination-buttons')
+        pigination_buttons.innerHTML = ''
+                }
+               
             })
             .catch((err)=>{
                 console.log(err)
@@ -75,6 +97,7 @@ function resetform() {
             alert(result.data.message)
             resetform()
             // getexpenseDetails()
+            getexpenses(1)
 
 
         }
@@ -122,7 +145,7 @@ function resetform() {
             const button = document.createElement('button')
             button.textContent = 'Delete expense'
             button.onclick = () => {
-                deleteExpense(expense.id)
+                deleteExpense(expense.id,li)
             }
             li.appendChild(button)
             ul.appendChild(li)
@@ -137,45 +160,58 @@ function resetform() {
             const button1 = document.createElement('button')
             button1.innerText = previouspage
             button1.addEventListener('click', () => {
-                getexpenses(previouspage)
+                usedpage=previouspage
+                getexpenses()
             })
             pigination_buttons.appendChild(button1)
 
         }
         const button2 = document.createElement('button')
-        button2.innerText = currentpage
+        button2.innerHTML= `<h1>${currentpage}</h1>`
         button2.addEventListener('click', () => {
-            getexpenses(currentpage)
+            usedpage=currentpage
+            getexpenses()
         })
         pigination_buttons.appendChild(button2)
         if (hasnextpage) {
             const button3 = document.createElement('button')
             button3.innerText = nextpage
             button3.addEventListener('click', () => {
+                usedpage=nextpage
                 getexpenses(nextpage)
             })
             pigination_buttons.appendChild(button3)
         }
 
     }
-    function getexpenses(page){
-         axios.get(`http://localhost:3000/expense/getexpenses?page=${page}`, { headers: { 'authorization': token } })
+    function getexpenses(){
+          const limit=document.getElementById('numberOfExpensesPerPage').value
+         axios.get(`http://localhost:3000/expense/getexpenses?usedpage=${usedpage}&limit=${limit}`, { headers: { 'authorization': token } })
             .then((result) => {
                 console.log(result)
                 showexpenses(result.data.result)
-                showpagination(result.data.buttondetails)
+                const list=result.data.result
+                console.log('number of expenses',list.length)
+                  if(list.length!=0){
+                 showpagination(result.data.buttondetails)
+                }
+                else{
+                     const pigination_buttons = document.getElementById('pigination-buttons')
+        pigination_buttons.innerHTML = ''
+                }
             })
             .catch((err)=>{
                 console.log(err)
             })
     }
-    async function deleteExpense(id) {
+    async function deleteExpense(id,li) {
         try {
             const token = localStorage.getItem('token')
             const result = await axios.delete(`http://localhost:3000/expense/deleteexpense/${id}`, { headers: { 'authorization': token } })
             console.log(result)
+            li.remove()
             alert(result.data.message)
-            getexpenseDetails()
+            getexpenses(1)
 
         }
         catch (err) {
