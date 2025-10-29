@@ -16,8 +16,7 @@
 
 <body>
     <button id="premium">By Premium Membership</button>
-    <button style='display: none;' id="leadership">ShowLeaderBoard</button>
-    <p id="memeber"></p>
+    <label for="numberOfExpensesPerPage">number of expenses per PAGE</label>
     <select id="numberOfExpensesPerPage" name="count">
        <option value="0" selected>0</option>
        <option value="2">2</option>
@@ -35,6 +34,11 @@
 
         <button type="submit">add expense</button>
     </form>
+    <p id="memeber"></p>
+       <button style='display: none;' id="leadership">ShowLeaderBoard</button>
+    
+    <button  style='display: none;' id="download" onclick="download()">download expenses</button>
+    <div id="downloadButtonsErrors"></div>
     <ul id="expense-details"></ul>
     <div id="pigination-buttons"></div>
     <h2 style="display: none;" id="leaderBoard">Leader Board</h2>
@@ -98,7 +102,7 @@ function resetform() {
             alert(result.data.message)
             resetform()
             // getexpenseDetails()
-            getexpenses(1)
+            getexpenses()
 
 
         }
@@ -284,6 +288,8 @@ function resetform() {
             if (result.data.userResult.membershipStatus === 'true') {
                 const leadership = document.getElementById('leadership')
                 leadership.style.display = 'block'
+                const download=document.getElementById('download')
+                download.style.display='block'
                 const premium = document.getElementById('premium')
                 premium.style.display = 'none'
                 const para = document.getElementById('memeber')
@@ -322,6 +328,24 @@ function resetform() {
 
 
 
+    }
+    function download() {
+        axios.get("http://localhost:3000/expense/download", { headers: { 'authorization': token } })
+        .then((result)=>{
+            if(result.status==200){
+                const a=document.createElement('a')
+                a.href=result.data.fileurl
+                a.download='expenses.txt'
+                a.click()
+            }
+        })
+        .catch((err)=>{
+            console.log(err)
+            const downloadButtonsErrors=document.getElementById('downloadButtonsErrors')
+            downloadButtonsErrors.innerHTML=`Error:${err.response.data.error}`
+            downloadButtonsErrors.style.color='red'
+        })
+        
     }
 
 </script>
