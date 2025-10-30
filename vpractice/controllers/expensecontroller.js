@@ -1,10 +1,12 @@
 const { Sequelize, where, json } = require('sequelize')
 const expenses = require('../models/expenses')
 const users = require('../models/users')
+const downloadedurls=require('../models/downloadedurls')
 require('dotenv').config()
 const AWS = require('aws-sdk')
 const genai = require('@google/genai');
 const sequelize = require('../utilss/db-connection');
+
 const { response } = require('express');
 function isnotvalid(string) {
     if (string == '') {
@@ -163,6 +165,12 @@ const download = async (req, res) => {
         const filename = `expense${req.user.id}-${new Date()}.txt`
         const url = await uploadToS3(reponseinstring, filename)
         console.log(url)
+        await downloadedurls.create({
+            url:url,
+            fileName:filename,
+            downloadeAt:new Date(),
+            userId:req.user.id
+        })
         if(url.error){
             throw new Error(`${url.error}`)
         }
@@ -202,10 +210,25 @@ async function uploadToS3(data, filename) {
     }
     
 }
+// Example GET endpoint handler
+const getDownloadHistory = async (req, res) => {
+    try {
+        const history = await downloadedurls.findAll({
+            where: { userId: req.user.id },
+            order: [['downloadeAt', 'DESC']] // Show most recent first
+        });
+        console.log('neeeeeewwwww',history)
+
+        res.status(200).json({ success: true, history: history });
+    } catch (err) {
+        res.status(500).json({ success: false, error: 'Could not fetch history' });
+    }
+}
 
 module.exports = {
     addexpense,
     getexpenses,
     deleteexpense,
-    download
+    download,
+    getDownloadHistory
 }
